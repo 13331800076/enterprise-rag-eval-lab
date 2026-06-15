@@ -1,7 +1,8 @@
 """Tests for reranking."""
 
+import pytest
 from rag_lab.retrieval.bm25 import SearchResult
-from rag_lab.reranking.reranker import NoOpReranker, KeywordOverlapReranker
+from rag_lab.reranking.reranker import NoOpReranker, KeywordOverlapReranker, CrossEncoderReranker
 
 
 class TestNoOpReranker:
@@ -39,3 +40,23 @@ class TestKeywordOverlapReranker:
         reranked = reranker.rerank("hello", results)
         assert reranked[0].metadata["reranker"] == "keyword_overlap"
         assert reranked[0].metadata["overlap"] == 1
+
+
+@pytest.mark.skip(reason="Cross-encoder model download requires network and takes time")
+class TestCrossEncoderReranker:
+    def test_rerank_changes_order(self):
+        results = [
+            SearchResult(chunk_id="c1", text="Python is a programming language", score=1.0, metadata={}),
+            SearchResult(chunk_id="c2", text="Machine learning with Python", score=0.5, metadata={}),
+            SearchResult(chunk_id="c3", text="Deep learning frameworks", score=0.8, metadata={}),
+        ]
+        reranker = CrossEncoderReranker()
+        reranked = reranker.rerank("Python programming", results)
+        assert len(reranked) == 3
+        assert all(r.metadata["reranker"] == "cross_encoder" for r in reranked)
+        assert reranked[0].metadata["model"] == "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
+    def test_empty_results(self):
+        reranker = CrossEncoderReranker()
+        reranked = reranker.rerank("query", [])
+        assert reranked == []

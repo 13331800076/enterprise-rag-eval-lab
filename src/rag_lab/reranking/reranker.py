@@ -41,3 +41,45 @@ class KeywordOverlapReranker(BaseReranker):
             )
         reranked.sort(key=lambda r: r.score, reverse=True)
         return reranked
+
+
+class CrossEncoderReranker(BaseReranker):
+    """Cross-encoder reranker using sentence-transformers.
+
+    Provides more accurate relevance scoring by jointly encoding
+    query and candidate text. Recommended models:
+        - cross-encoder/ms-marco-MiniLM-L-6-v2  (lightweight, default)
+        - BAAI/bge-reranker-base
+        - BAAI/bge-reranker-large
+    """
+
+    def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"):
+        from sentence_transformers import CrossEncoder
+
+        self.model_name = model_name
+        self.model = CrossEncoder(model_name)
+
+    def rerank(self, query: str, results: list[SearchResult]) -> list[SearchResult]:
+        if not results:
+            return []
+
+        pairs = [(query, r.text) for r in results]
+        scores = self.model.predict(pairs, show_progress_bar=False)
+
+        reranked = []
+        for result, score in zip(results, scores):
+            reranked.append(
+                SearchResult(
+                    chunk_id=result.chunk_id,
+                    text=result.text,
+                    score=float(score),
+                    metadata={
+                        **result.metadata,
+                        "reranker": "cross_encoder",
+                        "model": self.model_name,
+                    },
+                )
+            )
+
+        reranked.sort(key=lambda r: r.score, reverse=True)
+        return reranked
