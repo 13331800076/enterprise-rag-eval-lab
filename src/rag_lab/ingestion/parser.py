@@ -96,6 +96,14 @@ PARSERS: dict[str, Parser] = {
     ".htm": HtmlParser(),
 }
 
+# Optional: register PDF parser if PyMuPDF is available
+try:
+    from .pdf_parser import PdfParser
+
+    PARSERS[".pdf"] = PdfParser()
+except ImportError:
+    pass
+
 
 def parse_file(path: Path) -> Document:
     """Parse a file based on its extension."""
