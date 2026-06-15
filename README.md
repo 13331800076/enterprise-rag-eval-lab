@@ -176,11 +176,11 @@ python -m examples.run_evaluation
 
 | Retriever | Recall@5 | MRR@5 | nDCG@5 |
 |---|---:|---:|---:|
-| BM25 | 0.72 | 0.61 | 0.66 |
-| Vector | 0.76 | 0.64 | 0.69 |
-| Hybrid | 0.84 | 0.72 | 0.77 |
+| BM25 | 0.70 | 0.37 | 0.43 |
+| Vector | 0.90 | 0.67 | 0.69 |
+| Hybrid | 0.80 | 0.62 | 0.60 |
 
-> **Note:** Numbers above are illustrative. Run the evaluation script to generate real numbers from your dataset.
+> **Note:** Results generated on the included fixture dataset using `sentence-transformers/all-MiniLM-L6-v2`. Your numbers will vary with different documents and embedding models.
 
 ---
 

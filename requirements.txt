@@ -1,0 +1,11 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+sentence-transformers>=2.5.0
+faiss-cpu>=1.7.4
+rank-bm25>=0.2.2
+pydantic>=2.0.0
+python-multipart>=0.0.9
+click>=8.1.0
+beautifulsoup4>=4.12.0
+markdown>=3.5.0
+numpy>=1.24.0

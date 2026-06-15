@@ -1,17 +1,27 @@
 [
   {
-    "question": "What is BM25 used for?",
-    "relevant_chunk_ids": ["c2"],
-    "answer": "BM25 is a probabilistic ranking function used in search engines for lexical retrieval."
+    "question": "What is RAG and why does it matter?",
+    "relevant_chunk_ids": ["rag_overview_chunk_0"],
+    "answer": "RAG is Retrieval-Augmented Generation, a technique that combines information retrieval with text generation to ground LLM responses in factual documents."
   },
   {
-    "question": "How does vector retrieval work?",
-    "relevant_chunk_ids": ["c3"],
-    "answer": "Vector retrieval uses dense embeddings to find semantically similar text chunks."
+    "question": "How does BM25 work for document retrieval?",
+    "relevant_chunk_ids": ["bm25_guide_chunk_0", "bm25_guide_chunk_1"],
+    "answer": "BM25 is a probabilistic ranking function that scores documents using term frequency and inverse document frequency. It is effective for lexical matching where exact keyword overlap matters."
   },
   {
-    "question": "What is hybrid retrieval?",
-    "relevant_chunk_ids": ["c4"],
-    "answer": "Hybrid retrieval combines lexical and semantic retrieval scores for better results."
+    "question": "What libraries are used for approximate nearest neighbor search?",
+    "relevant_chunk_ids": ["vector_search_chunk_1"],
+    "answer": "FAISS and Milvus are popular libraries for approximate nearest neighbor search."
+  },
+  {
+    "question": "How can we combine lexical and semantic retrieval?",
+    "relevant_chunk_ids": ["vector_search_chunk_2", "bm25_guide_chunk_1"],
+    "answer": "Combining BM25 lexical scores with vector semantic scores often produces better results. Reciprocal Rank Fusion is one way to combine them."
+  },
+  {
+    "question": "What metrics are used to evaluate RAG retrieval?",
+    "relevant_chunk_ids": ["rag_overview_chunk_0"],
+    "answer": "Common metrics include Recall@k, Mean Reciprocal Rank (MRR), and Normalized Discounted Cumulative Gain (nDCG)."
   }
 ]

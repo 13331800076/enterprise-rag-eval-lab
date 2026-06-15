@@ -1,5 +1,0 @@
-This is a plain text sample document.
-
-It has multiple lines and paragraphs.
-
-Enterprise RAG systems need to handle various document formats including plain text files.

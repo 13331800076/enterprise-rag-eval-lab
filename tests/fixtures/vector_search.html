@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vector Search Guide</title>
+    <style>body { font-family: Arial; }</style>
+    <script>console.log("hidden script");</script>
+</head>
+<body>
+    <h1>Vector Search and Embeddings</h1>
+    <p>Vector search uses dense embeddings to find semantically similar documents. Unlike keyword matching, it captures semantic meaning.</p>
+    <h2>How It Works</h2>
+    <p>Documents are converted into high-dimensional vectors using embedding models like sentence-transformers. Queries are embedded the same way.</p>
+    <h2>Approximate Nearest Neighbors</h2>
+    <p>FAISS and Milvus are popular libraries for approximate nearest neighbor search. They trade a small accuracy loss for massive speed gains.</p>
+    <h2>Hybrid Retrieval</h2>
+    <p>Combining BM25 lexical scores with vector semantic scores often produces better results than either method alone. Reciprocal Rank Fusion is one way to combine them.</p>
+</body>
+</html>

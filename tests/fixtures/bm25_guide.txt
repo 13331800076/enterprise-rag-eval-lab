@@ -1,0 +1,5 @@
+BM25 is a probabilistic ranking function used by search engines to estimate the relevance of documents to a given search query. It is based on the probabilistic retrieval framework developed by Robertson and Sparck Jones.
+
+The BM25 algorithm scores documents using term frequency and inverse document frequency. It is particularly effective for lexical matching where exact keyword overlap matters.
+
+In enterprise RAG systems, BM25 is often combined with dense vector retrieval to form hybrid search. The lexical matching from BM25 complements semantic similarity from embeddings.
