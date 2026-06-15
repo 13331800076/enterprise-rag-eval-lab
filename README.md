@@ -230,7 +230,7 @@ enterprise-rag-eval-lab/
 ## Roadmap
 
 - [x] v1.0: Document ingestion, chunking, BM25, vector, hybrid, reranking, evaluation, FastAPI, Docker
-- [ ] v1.1: Cross-encoder reranker (`bge-reranker`, `ms-marco-MiniLM`)
+- [x] v1.1: Cross-encoder reranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`, `BAAI/bge-reranker`)
 - [ ] v1.2: OpenAI-compatible LLM generation endpoint
 - [ ] v1.3: Milvus / Neo4j vector store backends
 - [ ] v1.4: Streamlit UI for interactive demos
