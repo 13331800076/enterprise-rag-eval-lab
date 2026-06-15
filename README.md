@@ -166,21 +166,24 @@ We use a small benchmark dataset (`examples/eval_dataset.json`) to compare retri
 - **MRR@k**: Mean Reciprocal Rank of the first relevant chunk
 - **nDCG@k**: Normalized Discounted Cumulative Gain (accounts for ranking position)
 
-### Benchmark Results
+### RAG Strategy Leaderboard
 
-Run the evaluation:
+Run the full leaderboard evaluation:
 
 ```bash
-python -m examples.run_evaluation
+python -m examples.run_leaderboard
 ```
 
-| Retriever | Recall@5 | MRR@5 | nDCG@5 |
-|---|---:|---:|---:|
-| BM25 | 0.70 | 0.37 | 0.43 |
-| Vector | 0.90 | 0.67 | 0.69 |
-| Hybrid | 0.80 | 0.62 | 0.60 |
+| Rank | Strategy | Recall@1 | Recall@5 | MRR@5 | nDCG@5 |
+|------|---|---|---|---|---|
+| 🥇 | Vector | 0.80 | 0.90 | 1.00 | 0.91 |
+| 🥈 | Hybrid + Keyword Rerank | 0.70 | 0.90 | 0.84 | 0.85 |
+| 🥉 | Vector + Keyword Rerank | 0.70 | 0.90 | 0.85 | 0.84 |
+| 4 | Hybrid | 0.60 | 0.90 | 0.75 | 0.79 |
+| 5 | BM25 | 0.60 | 0.80 | 0.72 | 0.71 |
+| 6 | BM25 + Keyword Rerank | 0.60 | 0.80 | 0.71 | 0.71 |
 
-> **Note:** Results generated on the included fixture dataset using `sentence-transformers/all-MiniLM-L6-v2`. Your numbers will vary with different documents and embedding models.
+> **Note:** Results from the built-in leaderboard benchmark (`examples/run_leaderboard.py`) on the fixture dataset. Rerank strategies show different trade-offs across metrics. Your numbers will vary with different documents and embedding models.
 
 ---
 
@@ -231,10 +234,10 @@ enterprise-rag-eval-lab/
 
 - [x] v1.0: Document ingestion, chunking, BM25, vector, hybrid, reranking, evaluation, FastAPI, Docker
 - [x] v1.1: Cross-encoder reranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`, `BAAI/bge-reranker`)
-- [ ] v1.2: OpenAI-compatible LLM generation endpoint
-- [ ] v1.3: Milvus / Neo4j vector store backends
-- [ ] v1.4: Streamlit UI for interactive demos
-- [ ] v1.5: PDF ingestion with layout-aware chunking
+- [x] v1.2: Streamlit UI for interactive demos (Phase 1)
+- [x] v1.3: PDF ingestion with layout-aware chunking (Phase 2)
+- [x] v1.4: Leaderboard evaluation with standard benchmarks (Phase 3)
+- [ ] v1.5: OpenAI-compatible LLM generation endpoint
 
 ---
 
