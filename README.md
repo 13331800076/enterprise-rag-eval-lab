@@ -1,89 +1,117 @@
 # Enterprise RAG Evaluation Lab
 
-**One-liner:** A production-style RAG pipeline for enterprise documents with hybrid retrieval, reranking, and systematic evaluation.
+**One-liner:** A production-style RAG pipeline for enterprise documents, featuring hybrid retrieval, reranking, and systematic evaluation — built to demonstrate real-world ML engineering skills.
+
+---
 
 ## Problem Statement
 
-Enterprise RAG systems face a unique challenge: they must handle diverse document formats (TXT, Markdown, HTML), chunk text intelligently, retrieve relevant passages using both lexical and semantic signals, and provide measurable evidence that the retrieval pipeline works. Most public demos skip the evaluation step, leaving no way to prove the system actually retrieves the right content.
+Most RAG demos online are toy projects: they ingest a few paragraphs, use a single OpenAI call, and skip evaluation. In production, enterprises need:
 
-This project closes that gap by building a complete, testable, and benchmarked RAG pipeline from ingestion to evaluation.
+- Robust document parsing (PDF, Markdown, HTML, TXT)
+- Multiple chunking strategies with metadata preservation
+- Hybrid retrieval (lexical + dense) with score fusion
+- Reranking to improve precision at the top-k
+- Quantitative evaluation before deployment
+- FastAPI service and Docker packaging
+
+This project demonstrates every layer of a production RAG pipeline, from ingestion to evaluation, with clean architecture and comprehensive tests.
+
+---
 
 ## Architecture
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Document       │────▶│  Text        │────▶│  BM25        │
-│  Ingestion      │     │  Chunking    │     │  Retriever   │
-│  (txt/md/html)  │     │  (fixed/     │     │              │
-│                 │     │   heading)    │     │              │
-└─────────────────┘     └──────────────┘     └──────┬───────┘
-                                                    │
-                              ┌─────────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │  Hybrid         │
-                    │  Fusion         │◄────┌──────────────┐
-                    │  (weighted/RRF) │     │  Vector      │
-                    └────────┬────────┘     │  Retriever   │
-                             │              │  (FAISS)     │
-                             │              └──────────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │  Reranking      │
-                    │  (keyword/     │
-                    │   cross-enc)    │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │  Answer         │
-                    │  Generation     │
-                    │  (mock/LLM)    │
-                    └─────────────────┘
+┌─────────────────┐     ┌─────────────┐     ┌─────────────────┐
+│  Documents      │────▶│  Ingestion  │────▶│  Chunking       │
+│  (.md/.txt/.html)│     │  (Parser)   │     │  Fixed / Heading│
+└─────────────────┘     └─────────────┘     └─────────────────┘
+                                                       │
+                       ┌───────────────────────────────┘
+                       ▼
+              ┌─────────────────┐
+              │  BM25 Retriever │
+              │  (rank-bm25)    │
+              └────────┬────────┘
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+    ┌─────────────────┐  ┌─────────────────┐
+    │  Vector         │  │  Hybrid Fusion  │
+    │  (FAISS +       │  │  (Weighted /    │
+    │  sentence-      │  │  RRF)           │
+    │  transformers)  │  └────────┬────────┘
+    └────────┬────────┘           │
+             │                    │
+             └────────┬───────────┘
+                      ▼
+             ┌─────────────────┐
+             │  Reranker       │
+             │  (Keyword /     │
+             │  Cross-Encoder) │
+             └────────┬────────┘
+                      ▼
+             ┌─────────────────┐
+             │  Answer Gen     │
+             │  (Mock LLM /    │
+             │  OpenAI API)    │
+             └────────┬────────┘
+                      ▼
+             ┌─────────────────┐
+             │  Evaluation     │
+             │  Recall@k / MRR │
+             │  nDCG@k         │
+             └─────────────────┘
 ```
+
+---
 
 ## Key Features
 
-- **Document Ingestion**: Supports TXT, Markdown, and HTML with automatic script/style stripping for HTML
-- **Chunking Strategies**: Fixed-size chunking with overlap, and heading-based chunking for Markdown
-- **Hybrid Retrieval**: Combines BM25 lexical search with dense vector search (FAISS + sentence-transformers)
-- **Reranking**: Pluggable reranker interface with keyword overlap baseline
-- **Evaluation**: Recall@k, MRR, nDCG metrics with automated benchmark comparison across retrievers
-- **FastAPI Service**: RESTful endpoints for ingestion, search, and answer generation
-- **Docker Support**: Ready-to-run with `docker compose up`
+| Layer | Feature | Status |
+|---|---|---|
+| Ingestion | TXT, Markdown, HTML parsing | ✅ |
+| Chunking | Fixed-size + Heading-based | ✅ |
+| Retrieval | BM25 lexical search | ✅ |
+| Retrieval | Dense vector search (FAISS) | ✅ |
+| Retrieval | Hybrid fusion (Weighted + RRF) | ✅ |
+| Reranking | NoOp / KeywordOverlap | ✅ |
+| Generation | Mock LLM answer generation | ✅ |
+| Evaluation | Recall@k, MRR, nDCG | ✅ |
+| API | FastAPI REST endpoints | ✅ |
+| DevOps | Docker + docker-compose | ✅ |
+| Tests | pytest for all modules | ✅ |
+
+---
 
 ## Tech Stack
 
-- Python 3.10+
-- FastAPI + Uvicorn
-- sentence-transformers (default: all-MiniLM-L6-v2)
-- FAISS (CPU)
-- rank-bm25
-- pytest
-- Docker + Docker Compose
+- **Python 3.10+**
+- **FastAPI** — REST API framework
+- **sentence-transformers** — Dense embeddings (`all-MiniLM-L6-v2` by default)
+- **FAISS** — Local vector index (CPU)
+- **rank-bm25** — Lexical retrieval
+- **pytest** — Unit testing
+- **Docker** — Containerization
+
+---
 
 ## Quick Start
 
 ### Local Development
 
 ```bash
+# Clone and setup
 pip install -e ".[dev]"
+
+# Run tests
 pytest
+
+# Run CLI demo
 rag-lab hello
-```
 
-### Run FastAPI Server
-
-```bash
+# Run FastAPI server
 uvicorn rag_lab.api.app:app --reload
-```
-
-Test endpoints:
-
-```bash
-curl http://localhost:8000/health
 ```
 
 ### Docker
@@ -92,7 +120,17 @@ curl http://localhost:8000/health
 docker compose up
 ```
 
+The API will be available at `http://localhost:8000`.
+
+---
+
 ## API Usage
+
+### Health Check
+
+```bash
+curl http://localhost:8000/health
+```
 
 ### Ingest Documents
 
@@ -107,47 +145,44 @@ curl -X POST http://localhost:8000/ingest \
 ```bash
 curl -X POST http://localhost:8000/search \
   -H "Content-Type: application/json" \
-  -d '{"query": "enterprise RAG", "top_k": 5, "retriever_type": "hybrid"}'
+  -d '{"query": "RAG retrieval", "top_k": 5, "retriever_type": "hybrid"}'
 ```
 
-Retriever types: `bm25`, `vector`, `hybrid` (default).
-
-### Answer with Evidence
+### Answer (RAG Pipeline)
 
 ```bash
 curl -X POST http://localhost:8000/answer \
   -H "Content-Type: application/json" \
-  -d '{"query": "What is hybrid retrieval?", "top_k": 3, "retriever_type": "hybrid"}'
+  -d '{"query": "What is hybrid retrieval?", "top_k": 5, "retriever_type": "hybrid"}'
 ```
+
+---
 
 ## Evaluation Methodology
 
-The evaluation framework compares three retrieval strategies using a manually curated QA dataset (`examples/eval_dataset.json`):
+We use a small benchmark dataset (`examples/eval_dataset.json`) to compare retrieval strategies across three metrics:
 
-1. **BM25-only**: Lexical baseline
-2. **Vector-only**: Dense semantic baseline
-3. **Hybrid**: Weighted fusion of BM25 + Vector scores
-
-Metrics computed per example:
-- **Recall@k**: Proportion of relevant chunks found in top-k
+- **Recall@k**: Proportion of relevant chunks retrieved in top-k
 - **MRR@k**: Mean Reciprocal Rank of the first relevant chunk
-- **nDCG@k**: Normalized Discounted Cumulative Gain
+- **nDCG@k**: Normalized Discounted Cumulative Gain (accounts for ranking position)
 
-## Benchmark Results
+### Benchmark Results
 
-> **Note:** These numbers are placeholders. Run the evaluation script to generate real results.
-
-| Retriever | Recall@5 | MRR@5 | nDCG@5 |
-|-----------|---------:|------:|-------:|
-| BM25      | 0.72     | 0.61  | 0.66   |
-| Vector    | 0.76     | 0.64  | 0.69   |
-| Hybrid    | 0.84     | 0.72  | 0.77   |
-
-Run evaluation:
+Run the evaluation:
 
 ```bash
 python -m examples.run_evaluation
 ```
+
+| Retriever | Recall@5 | MRR@5 | nDCG@5 |
+|---|---:|---:|---:|
+| BM25 | 0.72 | 0.61 | 0.66 |
+| Vector | 0.76 | 0.64 | 0.69 |
+| Hybrid | 0.84 | 0.72 | 0.77 |
+
+> **Note:** Numbers above are illustrative. Run the evaluation script to generate real numbers from your dataset.
+
+---
 
 ## Project Structure
 
@@ -164,15 +199,17 @@ enterprise-rag-eval-lab/
 │   ├── bm25_demo.py
 │   ├── vector_demo.py
 │   └── hybrid_retrieval_demo.py
-├── src/rag_lab/
-│   ├── ingestion/
-│   ├── chunking/
-│   ├── retrieval/
-│   ├── reranking/
-│   ├── generation/
-│   ├── evaluation/
-│   ├── api/
-│   └── cli.py
+├── src/
+│   └── rag_lab/
+│       ├── models.py          # Core data models
+│       ├── cli.py             # CLI entry point
+│       ├── ingestion/         # Document parsing
+│       ├── chunking/          # Text chunking
+│       ├── retrieval/         # BM25, Vector, Hybrid
+│       ├── reranking/         # Rerankers
+│       ├── generation/        # Answer generation (placeholder)
+│       ├── evaluation/        # Metrics & benchmark
+│       └── api/               # FastAPI app
 ├── tests/
 │   ├── fixtures/
 │   ├── test_ingestion.py
@@ -180,6 +217,7 @@ enterprise-rag-eval-lab/
 │   ├── test_bm25.py
 │   ├── test_vector.py
 │   ├── test_hybrid.py
+│   ├── test_reranking.py
 │   ├── test_evaluation.py
 │   └── test_api.py
 └── docs/
@@ -187,31 +225,32 @@ enterprise-rag-eval-lab/
     └── design-decisions.md
 ```
 
+---
+
 ## Roadmap
 
-- [x] Document ingestion (TXT, Markdown, HTML)
-- [x] Text chunking (fixed-size, heading-based)
-- [x] BM25 retrieval
-- [x] Vector retrieval (FAISS + sentence-transformers)
-- [x] Hybrid retrieval (weighted fusion + RRF)
-- [x] Reranking interface (keyword overlap)
-- [x] Evaluation metrics (Recall@k, MRR, nDCG)
-- [x] FastAPI endpoints
-- [x] Docker support
-- [ ] Cross-encoder reranker (bge-reranker, ms-marco)
-- [ ] OpenAI-compatible LLM generation endpoint
-- [ ] Milvus / Neo4j backend support
-- [ ] Streamlit frontend
-- [ ] Production deployment guide (Kubernetes, etc.)
-
-## What This Project Demonstrates
-
-- **End-to-end RAG system design**: From raw documents to evaluated answers
-- **Hybrid retrieval expertise**: Combining lexical and semantic signals with proven fusion strategies
-- **Engineering rigor**: Every module has unit tests; the API is lazily initialized to avoid heavy model loading at startup
-- **Evaluation discipline**: Metrics-driven development rather than "it looks good"
-- **Production readiness**: Dockerized, FastAPI-based, with clear extension points for LLM and cross-encoder rerankers
+- [x] v1.0: Document ingestion, chunking, BM25, vector, hybrid, reranking, evaluation, FastAPI, Docker
+- [ ] v1.1: Cross-encoder reranker (`bge-reranker`, `ms-marco-MiniLM`)
+- [ ] v1.2: OpenAI-compatible LLM generation endpoint
+- [ ] v1.3: Milvus / Neo4j vector store backends
+- [ ] v1.4: Streamlit UI for interactive demos
+- [ ] v1.5: PDF ingestion with layout-aware chunking
 
 ---
 
-Built for demonstration and learning. Not for production use without additional hardening (authentication, rate limiting, persistent storage, etc.).
+## What This Project Demonstrates
+
+This project is designed to show recruiters and hiring managers that I can:
+
+1. **Build production-grade ML pipelines** — not just Jupyter notebooks
+2. **Design clean, modular architectures** — each layer is swappable and tested
+3. **Implement and evaluate retrieval algorithms** — BM25, dense vectors, hybrid fusion, RRF
+4. **Write production API code** — FastAPI with Pydantic models and error handling
+5. **Engineer for deployment** — Docker, lazy loading, environment-aware configuration
+6. **Test systematically** — pytest coverage across all core modules
+
+---
+
+## License
+
+MIT
