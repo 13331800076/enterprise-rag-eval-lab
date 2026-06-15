@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What is BM25 used for?",
+    "relevant_chunk_ids": ["c2"],
+    "answer": "BM25 is a probabilistic ranking function used in search engines for lexical retrieval."
+  },
+  {
+    "question": "How does vector retrieval work?",
+    "relevant_chunk_ids": ["c3"],
+    "answer": "Vector retrieval uses dense embeddings to find semantically similar text chunks."
+  },
+  {
+    "question": "What is hybrid retrieval?",
+    "relevant_chunk_ids": ["c4"],
+    "answer": "Hybrid retrieval combines lexical and semantic retrieval scores for better results."
+  }
+]
