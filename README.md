@@ -2,6 +2,16 @@
 
 **One-liner:** A production-style RAG pipeline for enterprise documents, featuring hybrid retrieval, reranking, and systematic evaluation — built to demonstrate real-world ML engineering skills.
 
+[![CI](https://github.com/13331800076/enterprise-rag-eval-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/13331800076/enterprise-rag-eval-lab/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Streamlit UI](docs/screenshots/streamlit_home.png)
+
+> 📖 **Read the blog post:** [我搭建了一个 RAG 策略对比实验室，发现 Hybrid 检索不一定比纯 Vector 强](./BLOG.md)
+
+![Streamlit UI](docs/screenshots/streamlit_home.png)
+
 ---
 
 ## Problem Statement
