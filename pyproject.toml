@@ -17,6 +17,7 @@ dependencies = [
     "uvicorn[standard]>=0.27.0",
     "sentence-transformers>=2.5.0",
     "faiss-cpu>=1.7.4",
+    "PyMuPDF>=1.23.0",
     "rank-bm25>=0.2.2",
     "pydantic>=2.0.0",
     "python-multipart>=0.0.9",
@@ -27,6 +28,7 @@ dependencies = [
     "streamlit>=1.30.0",
     "plotly>=5.18.0",
     "pandas>=2.0.0",
+    "PyMuPDF>=1.23.0",
 ]
 
 [project.optional-dependencies]
